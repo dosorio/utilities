@@ -10,7 +10,7 @@
 lockedReactions <- function(model){
   if(!is.loaded("sybil")){require("sybil")}
   locked <- NULL
-  pb <- txtProgressBar(style=3)
+  pb <- txtProgressBar(min = 1,max = model@react_num,style=3)
   for (reaction in 1:model@react_num) {
     setTxtProgressBar(pb, reaction)
     model@obj_coef <- rep(0, model@react_num)
