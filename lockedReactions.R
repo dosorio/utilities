@@ -7,10 +7,8 @@
 # Each function is set as objective function and all reactions without flux in all iteraction is reported as locked.
 # This function takes as input a valid modelorg model
 
-if(!is.loaded("sybil")){
-  require("sybil")
-}
 lockedReactions <- function(model){
+  if(!is.loaded("sybil")){require("sybil")}
   locked <- NULL
   pb <- txtProgressBar(style=3)
   for (reaction in 1:model@react_num) {
