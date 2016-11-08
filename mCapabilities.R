@@ -1,20 +1,33 @@
+library(foreach)
+library(doMC)
+library(sybilSBML)
+registerDoMC(32)
+
 mCapabilities <- function(model){
-  capabilities <- matrix(data = 0,
-                         nrow = model@met_num,
-                         ncol = model@met_num,
-                         dimnames = list(sort(model@met_id),sort(model@met_id))
-                         )
-  for(i in model@met_id){
-    for(j in model@met_id){
-      model <- addReact(model = model,
-                        id = "MC",
-                        Scoef = c(-1,1),
-                        met = c(i,j),
-                        reversible = FALSE,
-                        ub = 1000,
-                        obj = 1)
-      capabilities[i,j] <- optimizeProb(model)@lp_obj
-    }
+  foreach(i=model@met_id,.combine = rbind) %:% foreach(j=model@met_id) %dopar% {
+    model@obj_coef <- rep(0,model@react_num)
+    model <- addReact(model = model,
+                      id = "MC",
+                      Scoef = c(-1,1),
+                      met = c(i,j),
+                      reversible = FALSE,
+                      ub = 1000,
+                      obj = 1)
+    suppressMessages(optimizeProb(model)@lp_obj)
   }
-  return (capabilities)
 }
+
+healthy <- readSBMLmod("matureAstrocyte.xml")
+healthyR <- mCapabilities(healthy)
+write.table(healthyR,file = "healthy.txt",quote = FALSE,sep = "\t",row.names = FALSE,col.names = FALSE)
+
+inflammated <- readSBMLmod("matureAstrocyte.xml")
+lowbnd(inflammated)[react_id(inflammated) == 'EX_hdca(e)'] <- -0.208
+uppbnd(inflammated)[react_id(inflammated) == 'EX_hdca(e)'] <- -0.208
+inflammatedR <- mCapabilities(inflammated)
+write.table(inflammatedR,file = "inflammated.txt",quote = FALSE,sep = "\t",row.names = FALSE,col.names = FALSE)
+
+tibolone <- readSBMLmod("matureAstrocyte_Tibolone.xml")
+lowbnd(tibolone)[react_id(tibolone) == 'EX_hdca(e)'] <- -0.208
+uppbnd(tibolone)[react_id(tibolone) == 'EX_hdca(e)'] <- -0.208
+mCapabilities(tibolone,"tibolone.txt")
