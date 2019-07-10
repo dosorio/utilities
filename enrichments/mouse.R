@@ -14,6 +14,6 @@ makeMouseEnrichmentKEGG <- function(X){
   db <- AnnotationHub()
   mmu <- db[["AH70573"]]
   eIds <- select(mmu,X, "ENTREZID", "SYMBOL")[,2]
-  eOut <- clusterProfiler::enrichKEGG(gene = eIds, keyType = "ENTREZID", OrgDb = mmu)
+  eOut <- clusterProfiler::enrichKEGG(gene = eIds,organism = "mmu")
   as.data.frame(eOut)
 }
