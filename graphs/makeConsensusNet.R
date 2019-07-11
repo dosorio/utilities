@@ -1,4 +1,5 @@
 makeConsensusNet <- function(fileList){
+  require(igraph)
   makeNet <- function(X){
     rNet <- read.csv(X, header = TRUE, row.names = 1)
     diag(rNet) <- NA
@@ -9,9 +10,11 @@ makeConsensusNet <- function(fileList){
     rNet <- rNet[complete.cases(rNet),]
     return(rNet)
   }
+  message(1)
   oNet <- makeNet(fileList[1])
   oNet <- graph_from_data_frame(oNet, directed = FALSE)
   for(i in seq_along(fileList)[-1]){
+    message(i)
     nNet <- makeNet(fileList[i])
     nNet <- graph_from_data_frame(nNet, directed = FALSE)
     oNet <- intersection(oNet, nNet, keep.all.vertices = FALSE)
