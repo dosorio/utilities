@@ -1,10 +1,11 @@
 args = commandArgs(trailingOnly=TRUE)
-
 proteins <- list.files(args[1], full.names = "TRUE")
 ligands <- list.files(args[2], full.names = "TRUE")
 
+nRun <- 10
+
 # proteins <- list.files("proteins/", full.names = TRUE)
-# ligands <- list.files("ligands/", full.names = TRUE)[1]
+# ligands <- list.files("ligands/", full.names = TRUE)
 
 findCenter <- function (X) {
   fileContent <- readLines(X)
@@ -27,7 +28,6 @@ findSize <- function (X) {
   apply(fileContent, 2, max)
 }
 
-nRun <- 5
 sapply(seq_len(nRun), function(run){
   dir.create(paste0("out/r", run))
   sapply(proteins, function(X){
@@ -99,4 +99,5 @@ outP <- sapply(proteins, function(X){
   return(outL)
 }, simplify = FALSE)
 outP <- do.call(rbind.data.frame, outP)
+outP <- outP[order(outP$sdENERGY/outP$ENERGY, decreasing = FALSE),]
 write.csv(outP, quote = FALSE, row.names = FALSE, file = "results.csv")
