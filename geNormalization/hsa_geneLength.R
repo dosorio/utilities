@@ -1,4 +1,4 @@
-hsa_geneLenght <- function(){
+hsa_geneLength <- function(){
   require(biomaRt)
   ensembl <- useMart("ensembl")
   ensembl <-  useDataset("hsapiens_gene_ensembl",mart=ensembl)
