@@ -1,4 +1,4 @@
- hsa_ensemblRPKM <- function(X){
+ hsa_ensemblFPKM <- function(X){
   source("https://raw.githubusercontent.com/dosorio/utilities/master/singleCell/makeCPM.R")
   hsa_geneLength <- function(){
     require(biomaRt)
@@ -12,7 +12,7 @@
   gLength <- hsa_geneLength()
   gLength <- gLength[gLength[,1] %in% rownames(gExpression),]
   X <- X[gLength[,1],]
-  X <- X/gLength[,5]
   X <- makeCPM(X)
+  X <- X/gLength[,5]
   return(X)
 }
