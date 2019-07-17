@@ -13,6 +13,6 @@
   gLength <- gLength[gLength[,1] %in% rownames(X),]
   X <- X[gLength[,1],]
   X <- makeCPM(X)
-  X <- X/gLength[,5]
+  X <- X/(gLength[,5]/1000)
   return(X)
 }
