@@ -12,7 +12,7 @@
   gLength <- hsa_geneLength()
   gLength <- gLength[gLength[,1] %in% rownames(gExpression),]
   X <- X[gLength[,1],]
-  X <- X/gLength[,5]
+  X <- X/(gLength[,5]/1000)
   X <- makeCPM(X)
   return(X)
 }
