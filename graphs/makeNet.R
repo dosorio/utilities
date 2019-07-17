@@ -1,7 +1,7 @@
-makeNet <- function(X){
+makeNet <- function(X, threshold = 0.99){
   rNet <- read.csv(X, header = TRUE, row.names = 1)
   diag(rNet) <- NA
-  thresholdValue <- quantile(abs(rNet), 0.9, na.rm = TRUE)
+  thresholdValue <- quantile(abs(rNet), threshold, na.rm = TRUE)
   rNet[isTRUE(rNet < thresholdValue)] <- NA
   rNet[upper.tri(rNet, diag = TRUE)] <- NA
   rNet <- reshape2::melt(as.matrix(rNet))
