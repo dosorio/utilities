@@ -10,7 +10,7 @@
     gLength[,c(1,2,3,4,6,5)]
   }
   gLength <- hsa_geneLength()
-  gLength <- gLength[gLength[,1] %in% rownames(gExpression),]
+  gLength <- gLength[gLength[,1] %in% rownames(X),]
   X <- X[gLength[,1],]
   X <- makeCPM(X)
   X <- X/gLength[,5]
