@@ -1,6 +1,6 @@
 makeConsensusNet <- function(fileList, threshold){
   require(igraph)
-  makeNet <- function(X){
+  makeNet <- function(X, threshold){
     rNet <- read.csv(X, header = TRUE, row.names = 1)
     diag(rNet) <- NA
     thresholdValue <- quantile(abs(rNet), threshold, na.rm = TRUE)
