@@ -1,4 +1,4 @@
-makeConsensusNet <- function(fileList, threshold=0.99){
+makeConsensusNet <- function(fileList, threshold=0.9){
   require(igraph)
   makeNet <- function(X, threshold = threshold){
     rNet <- read.csv(X, header = TRUE, row.names = 1)
