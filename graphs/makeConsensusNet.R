@@ -19,5 +19,8 @@ makeConsensusNet <- function(fileList, threshold=0.99){
     nNet <- graph_from_data_frame(nNet, directed = FALSE)
     oNet <- intersection(oNet, nNet, keep.all.vertices = FALSE)
   }
+  oNet <- oNet[,]
+  oNet <- oNet[apply(oNet, 1, sum) > 0, apply(oNet, 2, sum) > 0]
+  oNet <- graph_from_adjacency_matrix(oNet)
   return(oNet)
 }
