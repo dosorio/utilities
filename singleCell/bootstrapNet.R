@@ -1,4 +1,4 @@
-bootstrapNet <- function(X, B = 10){
+bootstrapNet <- function(X, B = 100){
   makeBnet <- function(X){
     cellNames <- colnames(X)
     bX <- X[,sample(cellNames,1000)]
