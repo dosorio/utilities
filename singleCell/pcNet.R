@@ -4,7 +4,11 @@ pcNet <- function(X, nCom = 3, nCores = 1){
   n <- ncol(X)
   A <- 1-diag(n)
   if(nCores > 1){
-    cl <- parallel::makeCluster(getOption("cl.cores", nCores))
+    if(grepl("Windows", osVersion)){
+      cl <- parallel::makeCluster(getOption("cl.cores", nCores))
+    } else {
+      cl <- parallel::makeCluster(getOption("cl.cores", nCores),  type = "FORK")
+    }
     parallel::clusterExport(cl,"X", envir = environment())
     parallel::clusterExport(cl,"nCom", envir = environment())
     B <- parallel::parSapply(cl, seq_len(n), function(K){
