@@ -1,15 +1,13 @@
 pcNet <- function(X, nCom = 3, nCores = 1){
-  require(RSpectra)
   gNames <- rownames(X)
   X <- (scale(t(X)))
   n <- ncol(X)
   A <- 1-diag(n)
   if(nCores > 1){
-    require(parallel)
-    cl <- makeCluster(getOption("cl.cores", nCores))
-    clusterExport(cl,"X", envir = environment())
-    clusterExport(cl,"nCom", envir = environment())
-    B <- parSapply(cl, seq_len(n), function(K){
+    cl <- parallel::makeCluster(getOption("cl.cores", nCores))
+    parallel::clusterExport(cl,"X", envir = environment())
+    parallel::clusterExport(cl,"nCom", envir = environment())
+    B <- parallel::parSapply(cl, seq_len(n), function(K){
       y <- X[,K]
       Xi <- X
       Xi <- Xi[,-K]
@@ -19,7 +17,7 @@ pcNet <- function(X, nCom = 3, nCores = 1){
       Beta <- colSums(y * score)
       return(coeff %*% (Beta))
     })
-    stopCluster(cl)
+    parallel::stopCluster(cl)
   } else {
     B <- sapply(seq_len(n), function(K){
       y <- X[,K]
