@@ -10,11 +10,11 @@ computePseudoTime <- function(X, outputFile){
   fd <- new("AnnotatedDataFrame", data = fd)
   cds <- newCellDataSet(as.matrix(cMatrix), featureData = fd, expressionFamily = negbinomial.size())
   cds <- estimateSizeFactors(cds)
-  cds <- reduceDimension(cds, reduction_method = "DDRTree", verbose = TRUE, max_components = 3)
+  cds <- reduceDimension(cds, reduction_method = "DDRTree", verbose = TRUE, max_components = 2)
   cds <- orderCells(cds)
   pseudoTiveV <- pData(cds)
   pseudoTiveV <- cbind(pseudoTiveV,t(cds@reducedDimS[,rownames(pseudoTiveV)]))
-  pseudoTiveV <- pseudoTiveV[,c(2,4,5,6)]
-  colnames(pseudoTiveV) <- c("pseudoTime", "DDRTree1", "DDRTree2", "DDRTree3")
+  pseudoTiveV <- pseudoTiveV[,c(2,4,5)]
+  colnames(pseudoTiveV) <- c("pseudoTime", "DDRTree1", "DDRTree2")
   write.csv(pseudoTiveV, file = outputFile)
 }
