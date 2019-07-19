@@ -35,7 +35,6 @@ pcNet <- function(X, nCom = 3, nCores = 1){
     A[K,A[K,] == 1] = B[K,]
   }
   diag(A) <- 1
-  A <- round(A,5)
   colnames(A) <- rownames(A) <- gNames
   return(A)
 }
