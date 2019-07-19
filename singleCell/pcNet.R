@@ -1,9 +1,10 @@
 pcNet <- function(X, nCom = 3, nCores = 1){
+  require(pbapply)
   gNames <- rownames(X)
   X <- (scale(t(X)))
   n <- ncol(X)
   A <- 1-diag(n)
-  B <- pbapply::pbsapply(seq_len(n), function(K){
+  B <- pbsapply(seq_len(n), function(K){
     y <- X[,K]
     Xi <- X
     Xi <- Xi[,-K]
