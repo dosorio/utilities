@@ -8,7 +8,7 @@ pcNet <- function(X, nCom = 3, nCores = 5){
   A <- 1-diag(n)
   clusterExport(cl,"X", envir = environment())
   clusterExport(cl,"nCom", envir = environment())
-  B <- parSapply(cl, seq_len(n), function(K){#pbsapply(seq_len(n), function(K){
+  B <- parSapply(cl, seq_len(n), function(K){
     y <- X[,K]
     Xi <- X
     Xi <- Xi[,-K]
@@ -17,7 +17,7 @@ pcNet <- function(X, nCom = 3, nCores = 5){
     score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
     Beta <- colSums(y * score)
     return(coeff %*% (Beta))
-  })#, cl = cl)
+  })
   stopCluster(cl)
   B <- t(B)
   for(K in seq_len(n)){
