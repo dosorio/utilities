@@ -3,7 +3,7 @@ pcNet <- function(X, nCom = 3, nCores = 5){
   require(RSpectra)
   cl <- makeCluster(getOption("cl.cores", nCores))
   gNames <- rownames(X)
-  X <- (scale(t(X)))
+  X <- scale(t(X))
   n <- ncol(X)
   A <- 1-diag(n)
   clusterExport(cl,"X", envir = environment())
