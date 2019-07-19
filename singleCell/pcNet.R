@@ -1,4 +1,4 @@
-pcNet <- function(X, nCom = 3, nCores = 5){
+pcNet <- function(X, nCom = 3, nCores = 1){
   require(RSpectra)
   gNames <- rownames(X)
   X <- (scale(t(X)))
