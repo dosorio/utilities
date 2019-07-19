@@ -1,5 +1,6 @@
 pcNet <- function(X, nCom = 3, nCores = 1){
   require(pbapply)
+  require(RSpectra)
   gNames <- rownames(X)
   X <- (scale(t(X)))
   n <- ncol(X)
