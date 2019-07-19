@@ -4,7 +4,7 @@ pcNet <- function(X, nCom = 3, nCores = 1){
   n <- ncol(X)
   A <- 1-diag(n)
   if(nCores > 1){
-    if(grepl("Windows", osVersion)){
+    if(grepl("Windows", Sys.info()[[1]])){
       cl <- parallel::makeCluster(getOption("cl.cores", nCores))
     } else {
       cl <- parallel::makeCluster(getOption("cl.cores", nCores),  type = "FORK")
