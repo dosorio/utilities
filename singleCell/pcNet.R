@@ -1,20 +1,24 @@
-pcNet <- function(X, nCom = 3, nCores = 1){
-  require(pbapply)
+pcNet <- function(X, nCom = 3, nCores = 5){
+  require(parallel)
   require(RSpectra)
+  cl <- makeCluster(getOption("cl.cores", nCores))
   gNames <- rownames(X)
   X <- (scale(t(X)))
   n <- ncol(X)
   A <- 1-diag(n)
-  B <- pbsapply(seq_len(n), function(K){
+  clusterExport(cl,"X", envir = environment())
+  clusterExport(cl,"nCom", envir = environment())
+  B <- parSapply(cl, seq_len(n), function(K){#pbsapply(seq_len(n), function(K){
     y <- X[,K]
     Xi <- X
     Xi <- Xi[,-K]
-    coeff <- svds(Xi, nCom)$v
+    coeff <- RSpectra::svds(Xi, nCom)$v
     score <- Xi %*% coeff
     score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
     Beta <- colSums(y * score)
     return(coeff %*% (Beta))
-  })
+  })#, cl = cl)
+  stopCluster(cl)
   B <- t(B)
   for(K in seq_len(n)){
     A[K,A[K,] == 1] = B[K,]
