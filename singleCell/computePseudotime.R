@@ -1,5 +1,5 @@
 computePseudoTime <- function(X, outputFile){
-  cMatrix <- read.csv(X, header = TRUE)
+  cMatrix <- X #read.csv(X, header = TRUE)
   #rownames(cMatrix) <- paste0("G", seq_len(nrow(cMatrix)))
   #colnames(cMatrix) <- paste0("C", seq_len(ncol(cMatrix)))
   cMatrix <- cMatrix[rowSums(cMatrix) > 0,]
