@@ -1,0 +1,21 @@
+bootstrapNet <- function(X, B = 10){
+  makeBnet <- function(X){
+    cellNames <- colnames(X)
+    bX <- X[,sample(cellNames,1000)]
+    bX <- bX[rowMeans(bX != 0) > 0.05,]
+    oN <- pcNet(bX)
+    diag(oN) <- NA
+    qT <- quantile(abs(oN), 0.9, na.rm = TRUE)
+    oN[abs(oN) < qT] <- NA
+    oN <- reshape2::melt(oN)
+    oN <- oN[complete.cases(oN),]
+    oN <- igraph::graph_from_data_frame(oN)
+    return(oN)
+  }
+  oN <- makeBnet(X)
+  for(b in seq_len(B-1)){
+    nN <- makeBnet(X)
+    oN <- igraph::intersection(oN, nN,keep.all.vertices = FALSE)
+  }
+  return(oN)
+}
