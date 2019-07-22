@@ -12,10 +12,8 @@ bootstrapNet <- function(X, B = 100, qThreshold = 0.9, nCell = 1000, nCom = 3) {
     }
   }
   oN <- oN[,]
-  oN[oN != 0] <- 1
-  oN <- oN[apply(oN,1,sum) > 0, apply(oN,2,sum)]
+  oN <- oN[apply(oN,1,sum) > 0, apply(oN,2,sum)> 0]
   oN <- reshape2::melt(as.matrix(oN))
-  oN <- unique(oN)
   oN <- oN[oN[,3] != 0,]
   oN <- igraph::graph_from_data_frame(oN)
   return(oN)
