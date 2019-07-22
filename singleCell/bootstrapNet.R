@@ -1,9 +1,9 @@
-bootstrapNet <- function(X, B = 100, nCell = 1000, nCom = 3, nCores = 1) {
-  makeBnet <- function(X, nCell = 1000, nCom = 3, nCores = 1) {
+bootstrapNet <- function(X, B = 100, nCell = 1000, nCom = 3) {
+  makeBnet <- function(X, nCell = 1000, nCom = 3){
     cellNames <- colnames(X)
-    bX <- X[, sample(cellNames, nCell)]
+    bX <- X[, sample(cellNames, nCell, replace = TRUE)]
     bX <- bX[rowMeans(bX != 0) > 0.05, ]
-    oN <- pcNet(bX, nCom = nCom,  nCores = nCores)
+    oN <- pcNet(bX, nCom = nCom)
     diag(oN) <- NA
     qT <- quantile(abs(oN), 0.9, na.rm = TRUE)
     oN[abs(oN) < qT] <- NA
@@ -12,16 +12,13 @@ bootstrapNet <- function(X, B = 100, nCell = 1000, nCom = 3, nCores = 1) {
     oN <- igraph::graph_from_data_frame(oN)
     return(oN)
   }
-  oN <- makeBnet(X, nCell, nCom, nCores)
-  b <- 1
-  while (b <= B) {
-    #message(b)
-    nN <- try(makeBnet(X, nCell, nCom, nCores), silent = TRUE)
+  oN <- makeBnet(X, nCell, nCom)
+  sapply(seq_len((B-1)), function(b){
+    nN <- try(makeBnet(X, nCell, nCom), silent = TRUE)
     if (class(nN) == 'igraph') {
-      oN <- igraph::intersection(oN, nN, keep.all.vertices = FALSE)
-      b <- b + 1
+      oN <<- igraph::intersection(oN, nN, keep.all.vertices = FALSE)
     }
-  }
+  })
   oN <- oN[,]
   oN <- oN[apply(oN,1,sum) > 0, apply(oN,2,sum)]
   oN <- reshape2::melt(as.matrix(oN))
