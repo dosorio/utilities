@@ -20,7 +20,9 @@ pcNet <- function(X, nCom = 3, nCores = 1){
         score <- Xi %*% coeff
         score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
         Beta <- colSums(y * score)
-        return(coeff %*% (Beta))
+        Beta <- coeff %*% (Beta)
+        Beta <- round(Beta,5)
+        return(Beta)
       } else{
         return(rep(NA, ncol(Xi)))
       }
@@ -36,7 +38,9 @@ pcNet <- function(X, nCom = 3, nCores = 1){
         score <- Xi %*% coeff
         score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
         Beta <- colSums(y * score)
-        return(coeff %*% (Beta))
+        Beta <- coeff %*% (Beta)
+        Beta <- round(Beta,5)
+        return(Beta)
       } else{
         return(rep(NA, ncol(Xi)))
       }
