@@ -11,7 +11,7 @@ pcNet <- function(X, nCom = 3, nCores = 1){
     }
     parallel::clusterExport(cl,"X", envir = environment())
     parallel::clusterExport(cl,"nCom", envir = environment())
-    B <- parallel::parSapply(cl, seq_len(n), function(K){
+    B <- pbapply::pbsapply(seq_len(n), function(K){
       y <- X[,K]
       Xi <- X
       Xi <- Xi[,-K]
@@ -20,10 +20,10 @@ pcNet <- function(X, nCom = 3, nCores = 1){
       score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
       Beta <- colSums(y * score)
       return(coeff %*% (Beta))
-    })
+    }, cl = cl)
     parallel::stopCluster(cl)
   } else {
-    B <- sapply(seq_len(n), function(K){
+    B <- pbapply::pbsapply(seq_len(n), function(K){
       y <- X[,K]
       Xi <- X
       Xi <- Xi[,-K]
