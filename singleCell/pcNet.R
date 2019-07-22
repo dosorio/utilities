@@ -16,10 +16,14 @@ pcNet <- function(X, nCom = 3, nCores = 1){
       Xi <- X
       Xi <- Xi[,-K]
       coeff <- RSpectra::svds(Xi, nCom)$v
-      score <- Xi %*% coeff
-      score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
-      Beta <- colSums(y * score)
-      return(coeff %*% (Beta))
+      if(class(coeff) != 'try-error'){
+        score <- Xi %*% coeff
+        score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
+        Beta <- colSums(y * score)
+        return(coeff %*% (Beta))
+      } else{
+        return(rep(NA, ncol(Xi)))
+      }
     }, cl = cl)
     parallel::stopCluster(cl)
   } else {
@@ -27,11 +31,15 @@ pcNet <- function(X, nCom = 3, nCores = 1){
       y <- X[,K]
       Xi <- X
       Xi <- Xi[,-K]
-      coeff <- RSpectra::svds(Xi, nCom)$v
-      score <- Xi %*% coeff
-      score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
-      Beta <- colSums(y * score)
-      return(coeff %*% (Beta))
+      coeff <- try(RSpectra::svds(Xi, nCom)$v, silent = TRUE)
+      if(class(coeff) != 'try-error'){
+        score <- Xi %*% coeff
+        score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
+        Beta <- colSums(y * score)
+        return(coeff %*% (Beta))
+      } else{
+        return(rep(NA, ncol(Xi)))
+      }
     })
   }
   B <- t(B)
