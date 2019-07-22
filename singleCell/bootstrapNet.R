@@ -1,23 +1,8 @@
-bootstrapNet <- function(X, B = 100, nCell = 1000, nCom = 3) {
-  makeGraph <- function(X){
-    diag(X) <- NA
-    qT <- quantile(abs(X), 0.9, na.rm = TRUE)
-    X[abs(X) < qT] <- NA
-    X <- reshape2::melt(X)
-    X <- X[complete.cases(X), ]
-    X <- igraph::graph_from_data_frame(X)
-    return(X)
-  }
-  makeBnet <- function(X, nCell = 1000, nCom = 3){
-    cellNames <- colnames(X)
-    bX <- X[, sample(cellNames, nCell, replace = TRUE)]
-    bX <- bX[rowMeans(bX != 0) > 0.05, ]
-    oN <- pcNet(bX, nCom = nCom)
-    oN <- makeGraph(oN)
-    return(oN)
-  }
+bootstrapNet <- function(X, B = 100, qThreshold = 0.9, nCell = 1000, nCom = 3) {
+  source("https://raw.githubusercontent.com/dosorio/utilities/master/singleCell/makeBnet.R")
+  source("https://raw.githubusercontent.com/dosorio/utilities/master/singleCell/makeGraph.R")
   oN <- pcNet(X, nCom)
-  oN <- makeGraph(oN)
+  oN <- makeGraph(oN, qThreshold = qThreshold)
   sapply(seq_len((B)), function(b){
     nN <- try(makeBnet(X, nCell, nCom), silent = TRUE)
     if (class(nN) == 'igraph') {
