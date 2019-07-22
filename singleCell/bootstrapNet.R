@@ -15,7 +15,7 @@ bootstrapNet <- function(X, B = 100, nCell = 1000, nCom = 3, nCores = 1) {
   oN <- makeBnet(X, nCell, nCom, nCores)
   b <- 1
   while (b <= B) {
-    message(b)
+    #message(b)
     nN <- try(makeBnet(X, nCell, nCom, nCores), silent = TRUE)
     if (class(nN) == 'igraph') {
       oN <- igraph::intersection(oN, nN, keep.all.vertices = FALSE)
