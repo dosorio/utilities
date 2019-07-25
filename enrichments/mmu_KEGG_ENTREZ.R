@@ -1,4 +1,4 @@
-hsa_KEGG_ENTREZ <- function(X){
+mmu_KEGG_ENTREZ <- function(X){
   require(clusterProfiler)
   require(AnnotationHub)
   eOut <- clusterProfiler::enrichKEGG(gene = X,organism = "mmu")
