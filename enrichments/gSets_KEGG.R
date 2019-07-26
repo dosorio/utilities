@@ -1,4 +1,5 @@
 gSets_KEGG <- function(sp){
+  require(KEGGREST)
   keggSP <- keggList("pathway",sp)
   keggSP <- as.data.frame(keggSP)
   gSetsSP <- lapply(rownames(keggSP), function(X){
