@@ -1,7 +1,7 @@
 scQC <- function(X){
-  lSize <- colSums(X)
+  lSize <- apply(X,2,sum)
   lLimits <- quantile(lSize, c(0.15,0.95))
-  mtCounts <- colSums(X[grepl("MT-",rownames(X)),])
+  mtCounts <- apply(X[grepl("MT-",rownames(X)),],2,sum)
   mtRate <- mtCounts/lSize
   #X <- t(t(X)/lSize)*1e6
   X <- X[,lSize > lLimits[1] & lSize < lLimits[2] & mtRate < 0.1]
