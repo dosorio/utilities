@@ -5,6 +5,6 @@ scQC <- function(X){
   mtRate <- mtCounts/lSize
   #X <- t(t(X)/lSize)*1e6
   X <- X[,lSize > lLimits[1] & lSize < lLimits[2] & mtRate < 0.1]
-  X <- X[apply(X,1,sum) > 0,]
+  X <- X[apply(X != 0, 1 ,mean) > 0.1,]
   return(X)
 }
