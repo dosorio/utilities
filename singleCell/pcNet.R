@@ -7,17 +7,13 @@ pcNet <- function(X, nCom = 3){
     y <- X[,K]
     Xi <- X
     Xi <- Xi[,-K]
-    coeff <- try(RSpectra::svds(Xi, nCom)$v, silent = TRUE)
-    if(class(coeff) != 'try-error'){
-      score <- Xi %*% coeff
-      score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
-      Beta <- colSums(y * score)
-      Beta <- coeff %*% (Beta)
-      Beta <- round(Beta,5)
-      return(Beta)
-    } else{
-      return(rep(NA, ncol(Xi)))
-    }
+    coeff <- RSpectra::svds(Xi, nCom)$v
+    score <- Xi %*% coeff
+    score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
+    Beta <- colSums(y * score)
+    Beta <- coeff %*% (Beta)
+    Beta <- round(Beta,5)
+    return(Beta)
   }
   B <- pbapply::pbsapply(seq_len(n), getCoefficients)
   B <- t(B)
