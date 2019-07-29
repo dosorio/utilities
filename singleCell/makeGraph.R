@@ -1,4 +1,5 @@
   makeGraph <- function(X, qThreshold = 0.9){
+    X <- as.matrix(X)
     diag(X) <- NA
     qT <- quantile(abs(X), qThreshold, na.rm = TRUE)
     X[abs(X) < qT] <- NA
