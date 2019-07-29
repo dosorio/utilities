@@ -11,7 +11,7 @@ bootstrapNet <- function(X, B = 100, qThreshold = 0.9, nCell = 1000, nCom = 3) {
       b <- b + 1
     }
   }
-  oN <- oN[,]
+  oN <- as.matrix(oN[,])
   oN <- oN[apply(oN,1,sum) > 0, apply(oN,2,sum)> 0]
   oN <- reshape2::melt(as.matrix(oN))
   oN <- oN[oN[,3] != 0,]
