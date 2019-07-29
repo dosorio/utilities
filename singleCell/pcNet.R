@@ -7,7 +7,7 @@ pcNet <- function(X, nCom = 3){
     y <- X[,K]
     Xi <- X
     Xi <- Xi[,-K]
-    coeff <- RSpectra::svds(Xi, nCom)$v
+    coeff <- try(RSpectra::svds(Xi, nCom)$v, silent = TRUE)
     if(class(coeff) != 'try-error'){
       score <- Xi %*% coeff
       score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
