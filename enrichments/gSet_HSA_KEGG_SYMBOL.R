@@ -3,4 +3,5 @@ gSet_HSA_KEGG_SYMBOL <- function(){
   hsaKEGG <- lapply(hsaKEGG, function(X){
     hsa_ENTREZ2SYMBOL(X)[,2]
   })
+  return(hsaKEGG)
 }
