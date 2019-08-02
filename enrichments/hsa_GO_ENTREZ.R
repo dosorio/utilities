@@ -3,6 +3,6 @@ hsa_GO_ENTREZ <- function(X){
   require(AnnotationHub)
   db <- AnnotationHub()
   hsa <- db[["AH70572"]]
-  out <- clusterProfiler::enrichGO(gene = X, keyType = "ENTREZID", OrgDb = hsa)
+  out <- clusterProfiler::enrichGO(gene = X, keyType = "ENTREZID", OrgDb = hsa, ont = "ALL")
   as.data.frame(out)
 }
