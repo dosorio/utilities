@@ -2,10 +2,12 @@
 #  cY <- cluster_walktrap(netY, steps = 100)
 
 compareModules <- function(cX, cY){
-  S <- sapply(unique(cX$membership), function(mX){
-    sapply(unique(cY$membership), function(mY){
-      gX <- cX$names[cX$membership == mX]
-      gY <- cY$names[cY$membership == mY]
+  cX <- groups(cX)
+  cX <- cX[lengths(cX) > 1]
+  cY <- groups(cY)
+  cY <- cY[lengths(cY) > 1]
+  S <- sapply(cX, function(gX){
+    sapply(cY, function(gY){
       allG <- unique(c(gX,gY))
       sMatrix <- matrix(FALSE, nrow = length(allG), ncol = 2)
       rownames(sMatrix) <- allG
