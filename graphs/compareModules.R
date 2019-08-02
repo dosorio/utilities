@@ -1,7 +1,7 @@
-compareModules <- function(netX, netY){
-  cX <- cluster_walktrap(netX, steps = 100)
-  cY <- cluster_walktrap(netY, steps = 100)
-  
+#  cX <- cluster_walktrap(netX, steps = 100)
+#  cY <- cluster_walktrap(netY, steps = 100)
+
+compareModules <- function(cX, cY){
   S <- sapply(unique(cX$membership), function(mX){
     sapply(unique(cY$membership), function(mY){
       gX <- cX$names[cX$membership == mX]
