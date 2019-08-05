@@ -3,9 +3,7 @@
 
 compareModules <- function(cX, cY){
   cX <- groups(cX)
-  cX <- cX[lengths(cX) > 1]
   cY <- groups(cY)
-  cY <- cY[lengths(cY) > 1]
   S <- sapply(cX, function(gX){
     sapply(cY, function(gY){
       allG <- unique(c(gX,gY))
@@ -16,5 +14,6 @@ compareModules <- function(cX, cY){
       round(mean(apply(sMatrix,1,all)),2)
     })
   })
-  return(S)
+  S <- S[apply(S,1,function(X){any(X > 0)}),apply(S,2,function(X){any(X > 0)})] 
+  return(t(S))
 }
