@@ -12,7 +12,7 @@ pcNet <- function(X, nCom = 3){
     score <- t(t(score)/(apply(score,2,function(X){sqrt(sum(X^2))})^2))
     Beta <- colSums(y * score)
     Beta <- coeff %*% (Beta)
-    Beta <- round(Beta,5)
+    # Beta <- round(Beta,5)
     return(Beta)
   }
   B <- pbapply::pbsapply(seq_len(n), getCoefficients)
