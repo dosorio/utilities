@@ -2,8 +2,8 @@
 #  cY <- cluster_walktrap(netY, steps = 100)
 
 compareModules <- function(cX, cY){
-  cX <- groups(cX)
-  cY <- groups(cY)
+  #cX <- groups(cX)
+  #cY <- groups(cY)
   S <- sapply(cX, function(gX){
     sapply(cY, function(gY){
       allG <- unique(c(gX,gY))
