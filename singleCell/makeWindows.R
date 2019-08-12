@@ -1,4 +1,7 @@
-makeWindows <- function(X, W=10, O=50){
+# W is the number of desired Windows
+makeWindows <- function(X, W=10){
   nCol <- ncol(X)
-  zoo::rollapply(seq_len(nCol), ceiling(nCol/W), by = O, c)
+  W <- W+1
+  O <- nCol/W
+  zoo::rollapply(X, W, by=O, c)
 }
