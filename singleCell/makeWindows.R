@@ -1,4 +1,4 @@
-makeWindows <- function(X, W=100, O=50){
+makeWindows <- function(X, W=10, O=50){
   nCol <- ncol(X)
-  zoo::rollapply(seq_len(nCol), W, by = O, c)
+  zoo::rollapply(seq_len(nCol), ceiling(nCol/W), by = O, c)
 }
