@@ -9,5 +9,5 @@ getPseudoTime <- function(cMatrix){
   cds <- reduceDimension(cds, reduction_method = "DDRTree", verbose = TRUE, max_components = 2)
   cds <- orderCells(cds)
   pseudoTiveV <- pData(cds)
-  return(pseudoTiveV)
+  return(pseudoTiveV[,2])
 }
