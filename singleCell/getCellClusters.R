@@ -1,4 +1,5 @@
 getCellClusters <- function(X){
+  require(Seurat)
   X <- CreateSeuratObject(as.matrix(X))
   X <- NormalizeData(X)
   X <- ScaleData(X)
