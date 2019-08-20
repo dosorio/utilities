@@ -14,6 +14,6 @@ compareModules <- function(cX, cY){
       round(mean(apply(sMatrix,1,all)),2)
     })
   })
-  S <- S[apply(S,1,function(X){any(X > 0)}),apply(S,2,function(X){any(X > 0)})] 
+  #S <- S[apply(S,1,function(X){any(X > 0)}),apply(S,2,function(X){any(X > 0)})] 
   return(t(S))
 }
