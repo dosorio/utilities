@@ -1,4 +1,6 @@
 pcNet <- function(X, nCom = 3, scaleScores = TRUE, symmetric = FALSE, q = 0){
+  #require(RSpectra)
+  #require(Matrix)
   gNames <- rownames(X)
   X <- (scale(t(X)))  
   n <- ncol(X)
