@@ -1,4 +1,4 @@
- <- function(a,b, df=0){
+ l2Distance <- function(a,b, df=0){
   if(nrow(a) == 1){
     a <- rbind(0,a)
     b <- rbind(0,b)
