@@ -1,3 +1,8 @@
+library(Seurat)
+PTI <- readRDS('PTI.combined.rds')
+PTI <- PTI[,1:1000]
+UMAPPlot(PTI)
+
 ctAssign <- function(X){
   require(pbapply)
   
@@ -27,8 +32,13 @@ ctAssign <- function(X){
   colnames(outValues) <- tissueNames
   
   out <- list()
-  #out$Values <- outValues
-  #out$Type <- 
-  out <- tissueNames[unlist(apply(outValues,1,which.max))]
+  out$Values <- outValues
+  cType <- apply(outValues,1,function(X){tissueNames[which.max(X)]})
+  cType[lengths(cType) < 1] <- 'NA'
+  out$cType <- cType
   return(out)
 }
+
+cT <- ctAssign(PTI@assays$RNA@data)
+Idents(PTI) <- cT[[2]]
+UMAPPlot(PTI)
