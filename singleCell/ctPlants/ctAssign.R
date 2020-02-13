@@ -27,7 +27,8 @@ ctAssign <- function(X){
   colnames(outValues) <- tissueNames
   
   out <- list()
-  out$Values <- outValues
-  out$Type <- tissueNames[unlist(apply(outValues,1,which.max))]
+  #out$Values <- outValues
+  #out$Type <- 
+  out <- tissueNames[unlist(apply(outValues,1,which.max))]
   return(out)
 }
