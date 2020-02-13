@@ -10,16 +10,24 @@ ctAssign <- function(X){
   tS <- S[S$Locus %in% rownames(X),]
   
   # Filtering
-  xM <- X[M$Locus,]
-  xS <- X[S$Locus,]
+  xM <- X[tM$Locus,]
+  xS <- X[tS$Locus,]
   
   # Function
-  pbsapply(seq_len(ncol(xM)), function(cell){
+  outValues <- pbsapply(seq_len(ncol(xM)), function(cell){
     outValues <- c()
     for(cT in 2:ncol(tM)){
-      outValues[(cT-1)] <- mean(xS * tS[,cT]) * mean(xM[tM[,cT] >0 ,] >0)
+      outValues[(cT-1)] <- mean(xS[,cell] * tS[,cT], na.rm = TRUE) * mean(xM[tM[,cT] >0 ,cell] >0, na.rm = TRUE)
     }
-    outValues <- outValues/sum(outValues)
+    outValues <- outValues/sum(outValues,na.rm = TRUE)
     return(outValues)
   })
+  outValues <- t(outValues)
+  tissueNames <- colnames(tM)[2:ncol(tM)]
+  colnames(outValues) <- tissueNames
+  
+  out <- list()
+  out$Values <- outValues
+  out$Type <- tissueNames[apply(outValues,1,which.max)]
+  return(out)
 }
