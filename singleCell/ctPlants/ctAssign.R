@@ -1,6 +1,6 @@
 library(Seurat)
 PTI <- readRDS('PTI.combined.rds')
-PTI <- PTI[,1:1000]
+PTI <- PTI[,1:5000]
 UMAPPlot(PTI)
 
 ctAssign <- function(X){
@@ -35,7 +35,7 @@ ctAssign <- function(X){
   out$Values <- outValues
   cType <- apply(outValues,1,function(X){tissueNames[which.max(X)]})
   cType[lengths(cType) < 1] <- 'NA'
-  out$cType <- cType
+  out$cType <- unlist(cType)
   return(out)
 }
 
