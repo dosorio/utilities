@@ -5,10 +5,10 @@ plotDR <- function(X,
                    subtitle = NULL) {
   require(ggplot2)
   require(ggrepel)
-  #if(!any(X$diffRegulation$distance > 1e-10)){
+  if(!any(X$diffRegulation$distance > 1e-10)){
     X$diffRegulation$p.value[X$diffRegulation$distance <= 1e-10] <- 1
     X$diffRegulation$p.adj[X$diffRegulation$distance <= 1e-10] <- 1  
-  #}
+  }
   o <- -log10(X$diffRegulation$p.value)
   e <- -log10(pchisq(
     sort(rchisq(nrow(X$diffRegulation), df = 1), decreasing = TRUE),
