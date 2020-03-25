@@ -5,7 +5,6 @@ plotKO <- function(X, gKO, q = 0.99, annotate = FALSE, nCategories = 20, fdrThre
   if(length(gList) > 0){
     sCluster <- as.matrix(X$WT[gList,gList])
     koInfo <- sCluster[gKO,]
-    
     gList <- gList[!grepl('^mt-|^Rpl|^Rps',gList, ignore.case = TRUE)]
     sCluster[abs(sCluster) <= quantile(abs(sCluster), q)] <- 0
     sCluster[gKO,] <- koInfo
@@ -24,8 +23,6 @@ plotKO <- function(X, gKO, q = 0.99, annotate = FALSE, nCategories = 20, fdrThre
     set.seed(1)
     layPlot <- layout_with_fr(netPlot, weights = W)
     dPlot <- (dPlot/max(dPlot))*20
-    
-    
     if(isTRUE(annotate)){
       enrichFunction <- function(X, fdrThreshold = fdrThreshold){
         E <- enrichr(X, c('KEGG_2019_Human', 'GO_Biological_Process_2018', 'BioPlanet_2019', 'WikiPathways_2019_Human', 'Reactome_2016'))
