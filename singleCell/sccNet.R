@@ -1,7 +1,7 @@
 sccNet <- function(X, q = 0.95, nCell = 500, nNet = 50, denoiseNet = TRUE){
   nGenes <- nrow(X)
   gList <- rownames(X)
-  oNet <- sapply(seq_len(nNet), function(Z){
+  oNet <- pbapply::pbsapply(seq_len(nNet), function(Z){
     tNet <- Matrix::t(X[,sample(colnames(X), nCell)])
     tNet <- cor(as.matrix(tNet), method = 'sp')
     tNet <- tNet/max(abs(tNet))
