@@ -1,14 +1,13 @@
-sccNet <- function(X, nNet = 50, denoiseNet = TRUE){
+sccNet <- function(X, q = 0.95, nCell = 500, nNet = 50, denoiseNet = TRUE){
   nGenes <- nrow(X)
   gList <- rownames(X)
-  set.seed(1)
-  oNet <- pbapply::pbsapply(seq_len(nNet), function(Z){
-    tNet <- Matrix::t(X[,sample(colnames(X), 500)])
+  oNet <- sapply(seq_len(nNet), function(Z){
+    tNet <- Matrix::t(X[,sample(colnames(X), nCell)])
     tNet <- cor(as.matrix(tNet), method = 'sp')
     tNet <- tNet/max(abs(tNet))
     tNet <- round(tNet,1)
     diag(tNet) <- 0
-    tNet[abs(tNet) < quantile(abs(tNet), 0.95)] <- 0
+    tNet[abs(tNet) < quantile(abs(tNet), q)] <- 0
     tNet <- Matrix::Matrix(tNet)
     return(tNet)  
   })
