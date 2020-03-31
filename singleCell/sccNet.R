@@ -2,7 +2,7 @@ sccNet <- function(X, q = 0.95, nCell = 500, nNet = 25, K = 2, denoiseNet = TRUE
   X <- t(t(X)/colSums(X))
   nGenes <- nrow(X)
   gList <- rownames(X)
-  set.seed(2)
+  set.seed(1)
   oNet <- pbapply::pbsapply(seq_len(nNet), function(Z){
     tNet <- Matrix::t(X[,sample(seq_len(ncol(X)), nCell, replace = TRUE)])
     tNet <- cor(as.matrix(tNet), method = 'sp')
