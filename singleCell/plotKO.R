@@ -72,6 +72,11 @@ plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThres
         tPlot <- unique(unlist(tPlot))
         eGenes <- toupper(names(V(netPlot))) %in% tPlot
         vColor <- rgb(0,188/255,1,0.3)
+        if(nrow(E) == 1){
+          pieColors <- list(hcl.colors(nrow(E), alpha = 0.7))
+        } else {
+          pieColors <- list(hcl.colors(nrow(E), palette = 'Zissou 1', alpha = 0.7))
+        }
         par(mar=c(4,0,0,0), xpd = TRUE)
         plot(netPlot,
              layout = layPlot, 
@@ -80,7 +85,7 @@ plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThres
              vertex.shape = ifelse(eGenes,'pie','circle'),
              vertex.pie = pPlot,
              vertex.size = 10+dPlot, 
-             vertex.pie.color=list(hcl.colors(nrow(E), palette = 'Zissou 1', alpha = 0.7)),
+             vertex.pie.color=pieColors,
              vertex.label.family="Times", 
              vertex.label.font=ifelse(eGenes,2,1),
              edge.color = ifelse(E(netPlot)$W > 0, 'red', 'blue'),
