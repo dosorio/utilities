@@ -1,4 +1,4 @@
-sccTenifoldNet <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_minNvalues = 100, nc_q = 0.95, nc_nCell = 500, nc_nNet = 25, nc_K = 2, nc_denoiseNet = TRUE, ma_nDim = 30){
+sccTenifoldNet <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_minNvalues = 500, nc_q = 0.95, nc_nCell = 500, nc_nNet = 2, nc_K = 2, nc_denoiseNet = TRUE, ma_nDim = 30){
   scQC <- function(X, mtThreshold = qc_mtThreshold, minLSize = qc_minLSize){
     if(class(X) == 'Seurat'){
       countMatrix <- X@assays$RNA@counts
@@ -181,11 +181,21 @@ sccTenifoldNet <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_mi
   Y <- cpmNormalization(Y)
   X <- sccNet(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
   Y <- sccNet(Y, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
+  X <- as.matrix(X)
+  Y <- as.matrix(Y)
+  diag(X) <- 0
+  diag(Y) <- 0
+  X[abs(X) < quantile(abs(X), nc_q)] <- 0
+  Y[abs(Y) < quantile(abs(Y), nc_q)] <- 0
+  X <- Matrix::Matrix(X)
+  Y <- Matrix::Matrix(Y)
   mA <- manifoldAlignment(X, Y, d = ma_nDim)
   dR <- dRegulation(mA)
   outputResult <- list()
   outputResult$sccNetworks <- list(X=X,Y=Y)
   outputResult$manifoldAlignment <- mA
   outputResult$diffRegulation <- dR
+  
+  # Return
   return(outputResult)
 }
