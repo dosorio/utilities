@@ -1,5 +1,4 @@
 sccNet <- function(X, q = 0.95, nCell = 500, nNet = 25, K = 2, denoiseNet = TRUE){
-  X <- t(t(X)/colSums(X))
   nGenes <- nrow(X)
   gList <- rownames(X)
   set.seed(1)
