@@ -1,7 +1,7 @@
 plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThreshold = 0.05){
   library(enrichR)
   library(igraph)
-  gList <- X$diffRegulation$gene[X$diffRegulation$distance > 1e-10 & X$diffRegulation$p.adj < 0.05]
+  gList <- c(gKO, X$diffRegulation$gene[X$diffRegulation$distance > 1e-10 & X$diffRegulation$p.adj < 0.05])
   if(length(gList) > 0){
     sCluster <- as.matrix(X$WT[gList,gList])
     koInfo <- sCluster[gKO,]
