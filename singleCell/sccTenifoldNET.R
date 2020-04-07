@@ -92,11 +92,6 @@ sccTenifoldNET <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_mi
     wY <- Y+1
     mu <- 0.9
     eps <- 1e-8
-    X <- as.matrix(X)
-    Y <- as.matrix(Y)
-    L <- as.matrix(L)
-    wX <- as.matrix(wX)
-    wY <- as.matrix(wY)
     wXY <- mu * (sum(wX) + sum(wY)) / (2 * sum(L)) * L
     W <- rbind(cbind(wX, wXY), cbind(t(wXY), wY))
     nNodes <- nrow(W)
