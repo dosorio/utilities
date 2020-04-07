@@ -173,7 +173,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   diag(X) <- 0
   X[abs(X) < quantile(abs(X), nc_q)] <- 0
   Y <- X
-  Y[,gKO] <- 0
+  Y[gKO,] <- 0
   X <- Matrix::Matrix(X)
   Y <- Matrix::Matrix(Y)
   mA <- manifoldAlignment(X, Y, d = ma_nDim)
