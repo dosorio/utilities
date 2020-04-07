@@ -90,24 +90,18 @@ sccTenifoldNET <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_mi
     L <- diag(length(sharedGenes))
     wX <- X+1
     wY <- Y+1
-    mu <- 0.9
-    eps <- 1e-8
-    wXY <- mu * (sum(wX) + sum(wY)) / (2 * sum(L)) * L
+    wXY <- 0.9 * (sum(wX) + sum(wY)) / (2 * sum(L)) * L
     W <- rbind(cbind(wX, wXY), cbind(t(wXY), wY))
-    nNodes <- nrow(W)
-    lap <- -W
-    diag(lap) <- 0
-    D <- -apply(lap, 2, sum)
-    diag(lap) <- D
-    L <- lap
-    E <- eigen(L)
-    E <- RSpectra::eigs(L, d*2, 'SR')
+    W <- -W
+    diag(W) <- 0
+    diag(W) <- -apply(W, 2, sum)
+    E <- suppressWarnings(RSpectra::eigs(W, d*2, 'SR'))
     E$values <- suppressWarnings(as.numeric(E$values))
     E$vectors <- suppressWarnings(apply(E$vectors,2,as.numeric))
     newOrder <- order(E$values)
     E$values <- E$values[newOrder]
     E$vectors <- E$vectors[,newOrder]
-    E$vectors <- E$vectors[,E$values > eps]
+    E$vectors <- E$vectors[,E$values > 1e-8]
     alignedNet <- E$vectors[,1:30]
     colnames(alignedNet) <- paste0('NLMA ', seq_len(d))
     rownames(alignedNet) <- c(paste0('X_', sharedGenes), paste0('Y_', sharedGenes))

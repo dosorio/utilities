@@ -90,27 +90,19 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
     L <- diag(length(sharedGenes))
     wX <- X+1
     wY <- Y+1
-    mu <- 0.9
-    eps <- 1e-8
-    wXY <- L
-    wXY <- mu * (sum(wX) + sum(wY)) / (2 * sum(wXY)) * wXY
-    W <- rbind(cbind(wX, wXY), cbind(Matrix::t(wXY), wY))
-    nNodes <- nrow(W)
+    wXY <- 0.9 * (sum(wX) + sum(wY)) / (2 * sum(L)) * L
+    W <- rbind(cbind(wX, wXY), cbind(t(wXY), wY))
+    W <- -W
     diag(W) <- 0
-    diag(W) <- Matrix::rowSums(W)
-    #E <- suppressWarnings(RSpectra::eigs(W, ncol(W)))
-    E <- suppressWarnings(RSpectra::eigs(W, d, 'SM'))
+    diag(W) <- -apply(W, 2, sum)
+    E <- suppressWarnings(RSpectra::eigs(W, d*2, 'SR'))
+    E$values <- suppressWarnings(as.numeric(E$values))
+    E$vectors <- suppressWarnings(apply(E$vectors,2,as.numeric))
     newOrder <- order(E$values)
-    eVal <- suppressWarnings(as.numeric(E$values[newOrder]))
-    eVec <- E$vectors[,newOrder]
-    eVec <- suppressWarnings(apply(eVec,2,as.numeric))
-    selectedV <- (eVal > eps)
-    eVal <- eVal[selectedV]
-    eVec <- eVec[,selectedV]
-    cNorms <- apply(eVec,2,function(X){norm(as.matrix(X))})
-    eVec <- t(t(eVec)/cNorms)
-    eVec[((nNodes/2)+1):nNodes,] <- -1 * eVec[((nNodes/2)+1):nNodes,]
-    alignedNet <- eVec[,seq_len(d)]
+    E$values <- E$values[newOrder]
+    E$vectors <- E$vectors[,newOrder]
+    E$vectors <- E$vectors[,E$values > 1e-8]
+    alignedNet <- E$vectors[,1:30]
     colnames(alignedNet) <- paste0('NLMA ', seq_len(d))
     rownames(alignedNet) <- c(paste0('X_', sharedGenes), paste0('Y_', sharedGenes))
     return(alignedNet)
