@@ -96,10 +96,10 @@ sccTenifoldNET <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_mi
     wXY <- mu * (sum(wX) + sum(wY)) / (2 * sum(wXY)) * wXY
     W <- rbind(cbind(wX, wXY), cbind(Matrix::t(wXY), wY))
     nNodes <- nrow(W)
-    diag(W) <- 0
-    diag(W) <- Matrix::rowSums(W)
+    D <- Matrix::rowSums(abs(W))
+    L <- diag(D) - W
     #E <- suppressWarnings(RSpectra::eigs(W, ncol(W)))
-    E <- suppressWarnings(RSpectra::eigs(W, d, 'SM'))
+    E <- suppressWarnings(RSpectra::eigs(L, d*2, 'SM'))
     newOrder <- order(E$values)
     eVal <- suppressWarnings(as.numeric(E$values[newOrder]))
     eVec <- E$vectors[,newOrder]
