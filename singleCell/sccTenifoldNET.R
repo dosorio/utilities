@@ -171,6 +171,8 @@ sccTenifoldNET <- function(X, Y, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_mi
   Y <- geneFilter(Y, minNvalues = qc_minNvalues)
   X <- cpmNormalization(X)
   Y <- cpmNormalization(Y)
+  X <- X[!grepl('^Rpl|^Rps|^Mt-', rownames(X), ignore.case = TRUE),]
+  Y <- Y[!grepl('^Rpl|^Rps|^Mt-', rownames(Y), ignore.case = TRUE),]
   X <- sccNet(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
   Y <- sccNet(Y, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
   X <- as.matrix(X)
