@@ -1,7 +1,12 @@
 plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThreshold = 0.05){
+  # gKO <- 'Trem2'
+  # q = 0.99
+  # annotate = TRUE
+  # nCategories = 20
+  # fdrThreshold = 0.05
   library(enrichR)
   library(igraph)
-  gList <- c(gKO, X$diffRegulation$gene[X$diffRegulation$distance > 1e-10 & X$diffRegulation$p.adj < 0.05])
+  gList <- unique(c(gKO, X$diffRegulation$gene[X$diffRegulation$distance > 1e-10 & X$diffRegulation$p.adj < 0.05]))
   if(length(gList) > 0){
     sCluster <- as.matrix(X$WT[gList,gList])
     koInfo <- sCluster[gKO,]
@@ -25,7 +30,7 @@ plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThres
     dPlot <- (dPlot/max(dPlot))*20
     if(isTRUE(annotate)){
       enrichFunction <- function(X, fdrThreshold = fdrThreshold){
-        E <- enrichr(X, c('KEGG_2019_Human', 'GO_Biological_Process_2018', 'BioPlanet_2019', 'WikiPathways_2019_Human', 'Reactome_2016'))
+        E <- enrichr(X, c('KEGG_2019_Human', 'GO_Biological_Process_2018','GO_Cellular_Component_2018', 'GO_Molecular_Function_2018','BioPlanet_2019', 'WikiPathways_2019_Human', 'Reactome_2016'))
         E <- do.call(rbind.data.frame, E)
         E <- E[E$Adjusted.P.value < fdrThreshold,]
         E <- E[order(E$Adjusted.P.value),]
@@ -73,12 +78,12 @@ plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThres
         eGenes <- toupper(names(V(netPlot))) %in% tPlot
         vColor <- rgb(0,188/255,1,0.3)
         if(nrow(E) == 1){
-          pieColors <- list(hcl.colors(nrow(E), alpha = 0.7))
+          pieColors <- list(hcl.colors(5, palette = 'Zissou 1', alpha = 0.7)[5])
         } else {
           pieColors <- list(hcl.colors(nrow(E), palette = 'Zissou 1', alpha = 0.7))
         }
         par(mar=c(4,0,0,0), xpd = TRUE)
-        plot(netPlot,
+        suppressWarnings(plot(netPlot,
              layout = layPlot, 
              edge.arrow.size=.2,
              vertex.label.color="black", 
@@ -91,11 +96,11 @@ plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThres
              edge.color = ifelse(E(netPlot)$W > 0, 'red', 'blue'),
              edge.curved = ifelse(W == 0.2, 0, 0.1),
              vertex.color = vColor, 
-             vertex.frame.color = NA)
+             vertex.frame.color = NA))
         sigLevel <- formatC(E$Adjusted.P.value, digits = 2, format = 'g', width = 0, drop0trailing = TRUE)
         gSetNames <- lengths(strsplit(E$Genes, ';'))
         gSetNames <- paste0('(', gSetNames,') ', E$Term, ' FDR = ', sigLevel)
-        legend(x = -1.05, y = -1.05, legend = gSetNames, bty = 'n', ncol = 2, cex = 1, col = hcl.colors(nrow(E), palette = 'Zissou 1'), pch = 16)
+        legend(x = -1.05, y = -1.05, legend = gSetNames, bty = 'n', ncol = 2, cex = 1, col = unlist(pieColors), pch = 16)
       } else {
         par(mar=c(0,0,0,0))
         plot(netPlot,
