@@ -10,7 +10,6 @@ sccNet <- function(X, q = 0.95, nCell = 500, nNet = 25, K = 2, denoiseNet = TRUE
       tNet <- cor(as.matrix(tNet), method = 'sp')
     }
     diag(tNet) <- 0
-    tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
     tNet <- Matrix::Matrix(tNet)
     return(tNet)  
   })
@@ -35,6 +34,7 @@ sccNet <- function(X, q = 0.95, nCell = 500, nNet = 25, K = 2, denoiseNet = TRUE
       }
     }
     diag(tNet) <- 0
+    tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
     tNet <- Matrix::Matrix(tNet)
     aNet <- aNet + tNet[gList, gList]
   }
