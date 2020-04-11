@@ -1,5 +1,4 @@
 vstNorm <- function(X){
-  X <- sm
   X <- as.matrix(X)
   X[X == 0] <- NA
   loggeomeans <- rowMeans(log(X), na.rm = TRUE)
