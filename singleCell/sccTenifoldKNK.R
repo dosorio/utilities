@@ -167,7 +167,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   
   X <- scQC(X, minLSize = qc_minLSize, mtThreshold = qc_mtThreshold)
   X <- geneFilter(X, minNvalues = qc_minNvalues)
-  #X <- cpmNormalization(X)
+  X <- cpmNormalization(X)
   X <- X[!grepl('^Rpl|^Rps|^Mt-', rownames(X), ignore.case = TRUE),]
   X <- sccNet(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
   X <- as.matrix(X)
