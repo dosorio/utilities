@@ -50,7 +50,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
         tNet <- cor(as.matrix(tNet), method = 'sp')
       }
       diag(tNet) <- 0
-      tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
+      #tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       return(tNet)  
     })
@@ -76,7 +76,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
         
       }
       diag(tNet) <- 0
-      #tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
+      tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       aNet <- aNet + tNet[gList, gList]
     }
