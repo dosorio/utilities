@@ -49,7 +49,6 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
         tNet <- Matrix::t(X[,sample(seq_len(ncol(X)), nCell, replace = TRUE)])
         tNet <- cor(as.matrix(tNet), method = 'sp')
       }
-      tNet <- round(tNet,1)
       diag(tNet) <- 0
       tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
@@ -76,6 +75,8 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
         }
         
       }
+      diag(tNet) <- 0
+      #tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       aNet <- aNet + tNet[gList, gList]
     }
@@ -83,6 +84,31 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
     aNet <- Matrix::Matrix(aNet)
     return(aNet)
   }
+  
+  GGM <- function(X, gKO){
+    geneName <- rownames(X)
+    gKO <- geneName %in% gKO
+    if(any(gKO)){
+      gKO <- which(gKO)  
+    } else {
+      stop('Gene not included in the regulatory network')
+    }
+    n <- nrow(X)
+    index_per <- seq_len(n)[-gKO]
+    rowMax <- apply(X,1,max)
+    colMax <- apply(X,2,max)
+    diag(X) <- apply(cbind(rowMax,colMax),1,max) * 1.1
+    q11 <- X[gKO, gKO]
+    q1 <- X[gKO, -gKO]
+    q1t <- X[-gKO, gKO]
+    X <- X[index_per, index_per] - tcrossprod(q1t, q1)/q11
+    outMat <- matrix(0,n,n)
+    outMat[index_per,index_per] <- as.matrix(X)
+    dimnames(outMat) <- list(geneName,geneName)
+    outMat <- Matrix::Matrix(outMat)
+    return(outMat)
+  }
+  
   manifoldAlignment <- function(X, Y, d = ma_nDim){
     sharedGenes <- intersect(rownames(X), rownames(Y))
     X <- X[sharedGenes, sharedGenes]
@@ -173,8 +199,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   X <- as.matrix(X)
   diag(X) <- 0
   X[abs(X) < quantile(abs(X), nc_q)] <- 0
-  Y <- X
-  Y[gKO,] <- 0
+  Y <- GGM(X, gKO)
   X <- Matrix::Matrix(X)
   Y <- Matrix::Matrix(Y)
   mA <- manifoldAlignment(X, Y, d = ma_nDim)
