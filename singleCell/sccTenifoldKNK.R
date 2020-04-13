@@ -1,4 +1,5 @@
-sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_minNvalues = 100, nc_q = 0.95, nc_nCell = 500, nc_nNet = 25, nc_K = 2, nc_denoiseNet = TRUE, ma_nDim = 30){
+sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_minNvalues = 100, nc_q = 0.95, 
+                           nc_nCell = 500, nc_nNet = 25, nc_K = 2, nc_denoiseNet = TRUE, ma_nDim = 30){
   scQC <- function(X, mtThreshold = qc_mtThreshold, minLSize = qc_minLSize){
     if(class(X) == 'Seurat'){
       countMatrix <- X@assays$RNA@counts
@@ -50,7 +51,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
         tNet <- cor(as.matrix(tNet), method = 'sp')
       }
       diag(tNet) <- 0
-      tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
+      #tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       return(tNet)  
     })
@@ -69,14 +70,14 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
           tNet <- tNet$u %*% (tNet$d) %*% t(tNet$v)  
           rownames(tNet) <- colnames(tNet) <- gList  
         } else {
-          tNet <- RSpectra::svds(tNet,K, maxitr = 1e6)
+          tNet <- RSpectra::svds(tNet,K)
           tNet <- tNet$u %*% diag(tNet$d) %*% t(tNet$v)  
           rownames(tNet) <- colnames(tNet) <- gList  
         }
         
       }
       diag(tNet) <- 0
-      #tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
+      tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       aNet <- aNet + tNet[gList, gList]
     }
