@@ -39,10 +39,11 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   cpmNormalization <- function(X){
     Matrix::t(Matrix::t(X)/Matrix::colSums(X)) * 1e6
   }
-  sccNet <- function(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet){
+  sccNet <- function(X, q = 0.95, nCell = 500, nNet = 25, K = 2, denoiseNet = TRUE){
+    X <- t(t(X)/colSums(X))
     nGenes <- nrow(X)
     gList <- rownames(X)
-    set.seed(1)
+    set.seed(2)
     oNet <- pbapply::pbsapply(seq_len(nNet), function(Z){
       tNet <- Matrix::t(X[,sample(seq_len(ncol(X)), nCell, replace = TRUE)])
       tNet <- cor(as.matrix(tNet), method = 'sp')
@@ -50,8 +51,9 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
         tNet <- Matrix::t(X[,sample(seq_len(ncol(X)), nCell, replace = TRUE)])
         tNet <- cor(as.matrix(tNet), method = 'sp')
       }
+      tNet <- round(tNet,1)
       diag(tNet) <- 0
-      #tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
+      tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       return(tNet)  
     })
@@ -70,14 +72,12 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
           tNet <- tNet$u %*% (tNet$d) %*% t(tNet$v)  
           rownames(tNet) <- colnames(tNet) <- gList  
         } else {
-          tNet <- RSpectra::svds(tNet,K)
+          tNet <- RSpectra::svds(tNet,K, maxitr = 1e6)
           tNet <- tNet$u %*% diag(tNet$d) %*% t(tNet$v)  
           rownames(tNet) <- colnames(tNet) <- gList  
         }
         
       }
-      diag(tNet) <- 0
-      tNet[abs(tNet) < quantile(abs(tNet), q, na.rm = TRUE)] <- 0
       tNet <- Matrix::Matrix(tNet)
       aNet <- aNet + tNet[gList, gList]
     }
@@ -194,7 +194,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   
   X <- scQC(X, minLSize = qc_minLSize, mtThreshold = qc_mtThreshold)
   X <- geneFilter(X, minNvalues = qc_minNvalues)
-  #X <- cpmNormalization(X)
+  X <- cpmNormalization(X)
   X <- X[!grepl('^Rp[[:digit:]]+|^Rpl|^Rps|^Mt-', rownames(X), ignore.case = TRUE),]
   X <- sccNet(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
   X <- as.matrix(X)
