@@ -1,5 +1,4 @@
-sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_minNvalues = 100, nc_q = 0.95, 
-                           nc_nCell = 500, nc_nNet = 25, nc_K = 2, nc_denoiseNet = TRUE, ma_nDim = 30){
+sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 1000, qc_minNvalues = 100, nc_q = 0.95, nc_nCell = 500, nc_nNet = 25, nc_K = 2, nc_denoiseNet = TRUE, ma_nDim = 30){
   scQC <- function(X, mtThreshold = qc_mtThreshold, minLSize = qc_minLSize){
     if(class(X) == 'Seurat'){
       countMatrix <- X@assays$RNA@counts
@@ -39,11 +38,10 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   cpmNormalization <- function(X){
     Matrix::t(Matrix::t(X)/Matrix::colSums(X)) * 1e6
   }
-  sccNet <- function(X, q = 0.95, nCell = 500, nNet = 25, K = 2, denoiseNet = TRUE){
-    X <- t(t(X)/colSums(X))
+  sccNet <- function(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet){
     nGenes <- nrow(X)
     gList <- rownames(X)
-    set.seed(2)
+    set.seed(1)
     oNet <- pbapply::pbsapply(seq_len(nNet), function(Z){
       tNet <- Matrix::t(X[,sample(seq_len(ncol(X)), nCell, replace = TRUE)])
       tNet <- cor(as.matrix(tNet), method = 'sp')
@@ -85,31 +83,6 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
     aNet <- Matrix::Matrix(aNet)
     return(aNet)
   }
-  
-  GGM <- function(X, gKO){
-    geneName <- rownames(X)
-    gKO <- geneName %in% gKO
-    if(any(gKO)){
-      gKO <- which(gKO)  
-    } else {
-      stop('Gene not included in the regulatory network')
-    }
-    n <- nrow(X)
-    index_per <- seq_len(n)[-gKO]
-    rowMax <- apply(X,1,max)
-    colMax <- apply(X,2,max)
-    diag(X) <- apply(cbind(rowMax,colMax),1,max) * 1.1
-    q11 <- X[gKO, gKO]
-    q1 <- X[gKO, -gKO]
-    q1t <- X[-gKO, gKO]
-    X <- X[index_per, index_per] - tcrossprod(q1t, q1)/q11
-    outMat <- matrix(0,n,n)
-    outMat[index_per,index_per] <- as.matrix(X)
-    dimnames(outMat) <- list(geneName,geneName)
-    outMat <- Matrix::Matrix(outMat)
-    return(outMat)
-  }
-  
   manifoldAlignment <- function(X, Y, d = ma_nDim){
     sharedGenes <- intersect(rownames(X), rownames(Y))
     X <- X[sharedGenes, sharedGenes]
@@ -129,7 +102,7 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
     E$values <- E$values[newOrder]
     E$vectors <- E$vectors[,newOrder]
     E$vectors <- E$vectors[,E$values > 1e-8]
-    alignedNet <- E$vectors[,1:30]
+    alignedNet <- E$vectors[,seq_len(d)]
     colnames(alignedNet) <- paste0('NLMA ', seq_len(d))
     rownames(alignedNet) <- c(paste0('X_', sharedGenes), paste0('Y_', sharedGenes))
     return(alignedNet)
@@ -199,12 +172,13 @@ sccTenifoldKNK <- function(X, gKO = NULL, qc_mtThreshold = 0.1, qc_minLSize = 10
   X <- sccNet(X, q = nc_q, nCell = nc_nCell, nNet = nc_nNet, K = nc_K, denoiseNet = nc_denoiseNet)
   X <- as.matrix(X)
   diag(X) <- 0
-  X[abs(X) < quantile(abs(X), nc_q)] <- 0
-  Y <- GGM(X, gKO)
+  Y <- X
+  Y[gKO,] <- 0
   X <- Matrix::Matrix(X)
   Y <- Matrix::Matrix(Y)
   mA <- manifoldAlignment(X, Y, d = ma_nDim)
   dR <- dRegulation(mA)
+  rownames(dR) <- NULL
   outputResult <- list()
   outputResult$WT <- X
   outputResult$KO <- Y
