@@ -1,4 +1,5 @@
 scQC <- function(X, mtThreshold = 0.1, minLSize = 1000){
+  require(Matrix)
   if(class(X) == 'Seurat'){
     countMatrix <- X@assays$RNA@counts
   } else {
