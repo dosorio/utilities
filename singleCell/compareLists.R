@@ -24,7 +24,7 @@ compareLists <- function(gList1, gList2, B = 100, label = 'L'){
     expUB = apply(overlapR,1,mean) + 5* apply(overlapR,1,sd)
   )
   ggplot(data = listComparison, mapping = aes(x = rank, y = real)) +
-    geom_line(mapping = aes(colour='WT\nKO')) +
+    geom_line(mapping = aes(colour= label)) +
     geom_ribbon(mapping = aes(ymin=expLB, ymax=expUB), alpha=0.3, fill = "#E69F00") +
     geom_line(mapping = aes(x = rank, y = exp, colour='Expected by\nrandom')) +
     geom_abline(intercept = 0, slope = 1, lty = 2) +
