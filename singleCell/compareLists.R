@@ -1,4 +1,4 @@
-compareLists <- function(gList1, gList2, B = 100, label = 'L'){
+compareList <- function(gList1, gList2, B = 100, label = 'L'){
   require(pbapply)
   require(ggplot2)
   overlapR <- pbsapply(seq_len(B), function(Z){
