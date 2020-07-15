@@ -19,3 +19,12 @@ ctList <- sapply(ctList, function(X){
   paste0(c(X, unique(hsaPanglao$gene[hsaPanglao$celltype %in% X])), collapse = '\t')
 })
 writeLines(ctList, 'hsaPanglaoDB.gmt')
+
+mmCellMarker <-  clustermole_markers(species = 'mm')
+mmCellMarker <- mmCellMarker[mmCellMarker$species %in% 'Mouse',]
+mmCellMarker <- mmCellMarker[mmCellMarker$db %in% 'CellMarker',]
+ctList <- unique(mmCellMarker$celltype)
+ctList <- sapply(ctList, function(X){
+  paste0(c(X, unique(mmCellMarker$gene[mmCellMarker$celltype %in% X])), collapse = '\t')
+})
+writeLines(ctList, 'mmuCellMarker.gmt')
