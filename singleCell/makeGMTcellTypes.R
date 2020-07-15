@@ -8,7 +8,7 @@ ctList <- unique(mmPanglao$celltype)
 ctList <- sapply(ctList, function(X){
   paste0(c(X, unique(mmPanglao$gene[mmPanglao$celltype %in% X])), collapse = '\t')
 })
-writeLines(ctList, 'mmPanglaoDB.gmt')
+writeLines(ctList, 'mmuPanglaoDB.gmt')
 
 
 hsaPanglao <- clustermole_markers(species = 'hs')
