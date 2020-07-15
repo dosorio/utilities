@@ -28,3 +28,13 @@ ctList <- sapply(ctList, function(X){
   paste0(c(X, unique(mmCellMarker$gene[mmCellMarker$celltype %in% X])), collapse = '\t')
 })
 writeLines(ctList, 'mmuCellMarker.gmt')
+
+
+hsaCellMarker <-  clustermole_markers(species = 'hs')
+hsaCellMarker <- hsaCellMarker[hsaCellMarker$species %in% 'Mouse',]
+hsaCellMarker <- hsaCellMarker[hsaCellMarker$db %in% 'CellMarker',]
+ctList <- unique(hsaCellMarker$celltype)
+ctList <- sapply(ctList, function(X){
+  paste0(c(X, unique(hsaCellMarker$gene[hsaCellMarker$celltype %in% X])), collapse = '\t')
+})
+writeLines(ctList, 'hsaCellMarker.gmt')
