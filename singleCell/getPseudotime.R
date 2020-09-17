@@ -1,14 +1,18 @@
-getPseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
+computePseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
+  #nDim <- ifelse(nDim < ncol(cMatrix), ncol(cMatrix)-1, nDim)
   cMatrix <- cMatrix[rowSums(cMatrix) != 0,]
   if(isTRUE(simplified)){
     require(RSpectra)
     require(Matrix)
-    nMatrix <- log1p(t(t(cMatrix)/colSums(cMatrix)) * 1e4)
-    nMatrix <- t(scale(t(nMatrix)))
-    nMatrix <- t(svds(nMatrix, nDim)$v)
+    nMatrix <- Matrix::t(cMatrix)
+    nMatrix <- nMatrix/rowSums(cMatrix) * 1e4
+    nMatrix <- log1p(nMatrix)
+    nMatrix <- Matrix::t(scale(nMatrix))
+    nMatrix <- Matrix::t(svds(nMatrix, nDim)$v)
     colnames(nMatrix) <- colnames(cMatrix)
     rownames(nMatrix) <- paste0('g', seq_len(nDim))
     cMatrix <- nMatrix
+    rm(nMatrix)
   }
   require(monocle)
   fd <- data.frame('gene_short_name' = rownames(cMatrix))
