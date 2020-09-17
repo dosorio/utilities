@@ -1,9 +1,15 @@
-computePseudoTime <- function(X, outputFile){
-  #cMatrix <- read.csv(X, header = TRUE)
-  cMatrix <- X
-  #rownames(cMatrix) <- paste0("G", seq_len(nrow(cMatrix)))
-  #colnames(cMatrix) <- paste0("C", seq_len(ncol(cMatrix)))
-  cMatrix <- cMatrix[rowSums(cMatrix) > 0,]
+computePseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
+  cMatrix <- cMatrix[rowSums(cMatrix) != 0,]
+  if(isTRUE(simplified)){
+    require(RSpectra)
+    require(Matrix)
+    nMatrix <- log1p(t(t(cMatrix)/colSums(cMatrix)) * 1e4)
+    nMatrix <- t(scale(t(nMatrix)))
+    nMatrix <- t(svds(nMatrix, nDim)$v)
+    colnames(nMatrix) <- colnames(cMatrix)
+    rownames(nMatrix) <- paste0('g', seq_len(nDim))
+    cMatrix <- nMatrix
+  }
   require(monocle)
   fd <- data.frame('gene_short_name' = rownames(cMatrix))
   rownames(fd) <- rownames(cMatrix)
@@ -12,9 +18,8 @@ computePseudoTime <- function(X, outputFile){
   cds <- estimateSizeFactors(cds)
   cds <- reduceDimension(cds, reduction_method = "DDRTree", verbose = TRUE, max_components = 2)
   cds <- orderCells(cds)
-  pseudoTiveV <- pData(cds)
-  pseudoTiveV <- cbind(pseudoTiveV,t(cds@reducedDimS[,rownames(pseudoTiveV)]))
-  pseudoTiveV <- pseudoTiveV[,c(2,4,5)]
-  colnames(pseudoTiveV) <- c("pseudoTime", "DDRTree1", "DDRTree2")
-  write.csv(pseudoTiveV, file = outputFile)
+  o <- pData(cds)[,2]
+  attr(o, which = 'DDRTree') <- t(cds@reducedDimS)
+  colnames(attr(o, which = 'DDRTree')) <- paste0('DDRTree', 1:2)
+  return(o)
 }
