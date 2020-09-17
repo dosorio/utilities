@@ -3,8 +3,10 @@ computePseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
   if(isTRUE(simplified)){
     require(RSpectra)
     require(Matrix)
-    nMatrix <- log1p(t(t(cMatrix)/colSums(cMatrix)) * 1e4)
-    nMatrix <- t(scale(t(nMatrix)))
+    nMatrix <- t(cMatrix)
+    nMatrix <- nMatrix/rowSums(cMatrix) * 1e4
+    nMatrix <- log1p(nMatrix)
+    nMatrix <- t(scale(nMatrix))
     nMatrix <- t(svds(nMatrix, nDim)$v)
     colnames(nMatrix) <- colnames(cMatrix)
     rownames(nMatrix) <- paste0('g', seq_len(nDim))
