@@ -12,7 +12,11 @@ computePseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
     colnames(nMatrix) <- colnames(cMatrix)
     rownames(nMatrix) <- paste0('g', seq_len(nDim))
     cMatrix <- nMatrix
-    remove(nMatrix)
+    rm(nMatrix)
+    
+    
+    
+    
   }
   require(monocle)
   fd <- data.frame('gene_short_name' = rownames(cMatrix))
