@@ -8,7 +8,7 @@ computePseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
     nMatrix <- nMatrix/rowSums(cMatrix) * 1e4
     nMatrix <- log1p(nMatrix)
     nMatrix <- t(scale(nMatrix))
-    nMatrix <- t(svds((nMatrix), nDim)$v)
+    nMatrix <- t(svds(nMatrix, nDim)$v)
     colnames(nMatrix) <- colnames(cMatrix)
     rownames(nMatrix) <- paste0('g', seq_len(nDim))
     cMatrix <- nMatrix
