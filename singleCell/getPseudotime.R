@@ -1,5 +1,5 @@
 getPseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
-  cMatrix <- cMatrix[rowSums(cMatrix) > 0,]
+  cMatrix <- cMatrix[rowSums(cMatrix) != 0,]
   if(isTRUE(simplified)){
     require(RSpectra)
     require(Matrix)
