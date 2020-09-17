@@ -3,9 +3,8 @@ getPseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
   if(isTRUE(simplified)){
     require(RSpectra)
     require(Matrix)
-    #nMatrix <- log1p(t(t(cMatrix)/colSums(cMatrix)) * 1e4)
     nMatrix <- log1p(t(t(cMatrix)/colSums(cMatrix)) * 1e4)
-    nMatrix <- scale(t(nMatrix))
+    nMatrix <- t(scale(t(nMatrix)))
     nMatrix <- t(svds(nMatrix, nDim)$v)
     colnames(nMatrix) <- colnames(cMatrix)
     rownames(nMatrix) <- paste0('g', seq_len(nDim))
@@ -19,6 +18,8 @@ getPseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
   cds <- estimateSizeFactors(cds)
   cds <- reduceDimension(cds, reduction_method = "DDRTree", verbose = TRUE, max_components = 2)
   cds <- orderCells(cds)
-  pseudoTiveV <- pData(cds)
-  return(pseudoTiveV[,2])
+  o <- pData(cds)[,2]
+  attr(o, which = 'DDRTree') <- t(cds@reducedDimS)
+  colnames(attr(o, which = 'DDRTree')) <- paste0('DDRTree', 1:2)
+  return(o)
 }
