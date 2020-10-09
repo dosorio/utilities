@@ -76,7 +76,7 @@ plotKO <- function(X, gKO, q = 0.99, annotate = TRUE, nCategories = 20, fdrThres
         names(pPlot) <- names(V(netPlot))
         tPlot <- unique(unlist(tPlot))
         eGenes <- toupper(names(V(netPlot))) %in% tPlot
-        vColor <- rgb(0,188/255,1,0.3)
+        vColor <- rgb(195/255, 199/255, 198/255 ,0.3)
         if(nrow(E) == 1){
           pieColors <- list(hcl.colors(5, palette = 'Zissou 1', alpha = 0.7)[5])
         } else {
