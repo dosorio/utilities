@@ -21,7 +21,7 @@ computePseudoTime <- function(cMatrix, simplified = TRUE, nDim = 100){
   cds <- newCellDataSet(as.matrix(cMatrix), featureData = fd, expressionFamily = negbinomial.size())
   cds <- estimateSizeFactors(cds)
   cds <- reduceDimension(cds, reduction_method = "DDRTree", verbose = TRUE, max_components = 2)
-  cds <- orderCells(cds)
+  cds <- orderCells(cds, num_paths = 1)
   o <- pData(cds)[,2]
   attr(o, which = 'DDRTree') <- t(cds@reducedDimS)
   colnames(attr(o, which = 'DDRTree')) <- paste0('DDRTree', 1:2)
