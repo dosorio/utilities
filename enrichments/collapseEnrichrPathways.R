@@ -15,7 +15,7 @@ collapseEnrichrPathways <- function(geneList, dbList, jaccardThreshold = NA, nPa
   }
   mainPathways <- lapply(split(E, E$G), function(X){X[1,]})
   mainPathways <- do.call(rbind.data.frame, mainPathways)
-  mainPathways$P <- lapply(split(E, E$G), function(X){paste0(unique(X$Term[-1]), collapse = ';')})
+  mainPathways$P <- unlist(lapply(split(E, E$G), function(X){paste0(unique(X$Term[-1]), collapse = ';')}))
   mainPathways <- mainPathways[,c('Term', 'Overlap', 'Adjusted.P.value', 'Genes', 'P')]
   return(mainPathways)
 }
