@@ -22,7 +22,7 @@ networkScoring <- function(rNetwork, geneSets){
   # Scores are normalized using the BOX-COX normalization method
   geneSetScores <- unlist(geneSetScores)
   geneSetScores[!is.finite(geneSetScores)] <- 0
-  BC <- MASS::boxcox(geneSetScores[geneSetScores >  0]~1)
+  BC <- MASS::boxcox(geneSetScores[geneSetScores >  0]~1, plotit = FALSE)
   BC <- 1 + abs(BC$x[which.max(BC$y)])
   geneSetScores <- geneSetScores ^ BC
   
