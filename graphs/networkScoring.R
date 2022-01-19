@@ -9,13 +9,14 @@ networkScoring <- function(rNetwork, geneSets){
   geneNames <- names(V(rNetwork))
   
   # The score is computed using the averages shorted paths between vertices multiplied by the 
-  # specificity and the proportion observed of each gene set. 
+  # proportion observed of each gene set and scaled accordingly to the promiscuity of the genes
+  # included
   geneSetScores <- lapply(geneSets, function(gSet){
     setSize <- length(gSet)
     gSet <- gSet[gSet %in% geneNames]
     obsProportion <- length(gSet)/setSize
     setSpecificity <- mean(geneSpecificty[gSet])
-    setScore <- mean_distance(induced_subgraph(rNetwork, gSet)) * obsProportion * setSpecificity
+    setScore <- (mean_distance(induced_subgraph(rNetwork, gSet)) * obsProportion) / setSpecificity
     return(setScore)
   })
   
