@@ -16,7 +16,7 @@ networkScoring <- function(rNetwork, geneSets){
     gSet <- gSet[gSet %in% geneNames]
     obsProportion <- length(gSet)/setSize
     setSpecificity <- mean(geneSpecificty[gSet])
-    setScore <- (mean_distance(induced_subgraph(rNetwork, gSet)) * obsProportion) / setSpecificity
+    setScore <- (mean_distance(induced_subgraph(rNetwork, gSet), directed = FALSE, unconnected = TRUE) * obsProportion) / setSpecificity
     return(setScore)
   })
   
