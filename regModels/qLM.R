@@ -1,5 +1,7 @@
 qLM <- function(X, y){
   X <- cbind(1,X)
+  n <- nrow(X)
+  p <- ncol(X)
   m <- solve(t(X) %*% X) %*% t(X) %*% y
   yHat <- X %*% m
   MSM <- rowSums((t(yHat) - colMeans(y))^2)/(p-1)
